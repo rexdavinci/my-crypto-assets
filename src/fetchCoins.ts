@@ -1,7 +1,6 @@
-import { writeFile } from 'fs';
-import { gzip } from 'zlib';
 import axios from 'axios';
 import { CoinRanking, HttpResponse } from './interfaces';
+import { setAsync } from './redis';
 
 async function request<T>(option?: string): Promise<HttpResponse<T>> {
   const response: HttpResponse<T> = await axios(
@@ -10,28 +9,15 @@ async function request<T>(option?: string): Promise<HttpResponse<T>> {
   return response;
 }
 
-
-const saveNewFile = (newData: CoinRanking): void => {
+const saveNewFile = async (newData: CoinRanking): Promise<void> => {
   const stringifiedData = JSON.stringify(newData);
-  gzip(Buffer.from(stringifiedData, 'utf8'), (err, data): void => {
-    if (err) {
-      console.log(`Error creating zip, time: ${new Date().toLocaleString()}`);
-    } else {
-      writeFile('./data.json.gz', data, (exception): void => {
-        if (exception) {
-          console.log('Error writing file to server');
-        } else {
-          console.log(`new data saved to file successfully, completed: ${new Date().toLocaleString()}`);
-        }
-      });
-    }
-  });
+  await setAsync('assets', stringifiedData);
 };
 
 export default async function fetchCoins(): Promise<void> {
-  let result: CoinRanking = { data: { stats: { total: 0, updatedAt: '' }, coins: [] } };
+  let result: CoinRanking = { data: { stats: { total: 0, updatedAt: 0 }, coins: [] } };
   const callAPI: HttpResponse<CoinRanking> = await request();
-  if (callAPI.statusText.toLocaleLowerCase() === 'ok') {
+  if ((/ok/i).test(callAPI.statusText)) {
     result = { ...callAPI.data };
     console.log(`
       base case call made.
@@ -56,11 +42,11 @@ export default async function fetchCoins(): Promise<void> {
       };
       offset += 100;
     }
-    const now = new Date().toLocaleString();
+    const now = Date.now();
     console.log(`
       Done querying resource ${result.data.stats.total} of ${result.data.coins.length}, 
       writing to file..
-      started: ${now}
+      started: ${new Date().toLocaleString()}
     `);
     result.data.stats.updatedAt = now;
     saveNewFile(result);

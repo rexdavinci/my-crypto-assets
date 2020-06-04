@@ -1,31 +1,20 @@
 /* eslint-disable no-new */
 import http from 'http';
-import { createReadStream } from 'fs';
-import { createGunzip } from 'zlib';
 import express from 'express';
-import { CronJob } from 'cron';
-import fetchCoins from './fetchCoins';
+import cronjob from './cronJob';
+import { getAsync } from './redis';
 
+cronjob.start();
 
 const app = express();
 app.use(express.static('dist'));
 
-// eslint-disable-next-line @typescript-eslint/no-misused-promises
-new CronJob('*/30 */1 * * *', fetchCoins, null, true, 'Asia/Bangkok');
-
-app.use('/api/data', (_req, res) => {
-  // Read file
-  const unzip = createGunzip();
-  const readable = createReadStream('./data.json.gz');
-  readable.on('error', (err) => {
-    console.log(err);
-  });
-  return readable.pipe(unzip).pipe(res.type('json'));
+app.use('/api/data', async (_req, res) => {
+  // res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+  const data = await getAsync('assets');
+  return res.status(200).json({ assets: JSON.parse(data) });
 });
 
-
-http
-  .createServer(app)
-  .listen(process.env.PORT, () => {
-    console.log(`Listening on port ${process.env.PORT}`);
-  });
+http.createServer(app).listen(process.env.PORT, () => {
+  console.log(`Listening on port ${process.env.PORT}`);
+});

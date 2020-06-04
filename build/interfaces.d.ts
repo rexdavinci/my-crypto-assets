@@ -44,7 +44,7 @@ export interface CoinRanking {
     status?: string;
     data: {
         stats: {
-            updatedAt?: string;
+            updatedAt?: number;
             total: number;
             offset?: number;
             limit?: number;
