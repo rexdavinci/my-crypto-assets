@@ -24,7 +24,7 @@ exports.setAsync = exports.getAsync = void 0;
 const redis = __importStar(require("redis"));
 const util_1 = require("util");
 const redisUri = process.env.REDISCLOUD_URL;
-const client = redis.createClient(`${redisUri}`, { no_ready_check: true });
+const client = redis.createClient(redisUri, { no_ready_check: true });
 const getAsync = util_1.promisify(client.get).bind(client);
 exports.getAsync = getAsync;
 const setAsync = util_1.promisify(client.set).bind(client);

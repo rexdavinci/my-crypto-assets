@@ -1,6 +1,24 @@
 import axios from 'axios';
-import { CoinRanking, HttpResponse } from './interfaces';
+import {
+  CoinRanking, HttpResponse, Coin, TrimmedCoins,
+} from './interfaces';
 import { setAsync } from './redis';
+
+const trimCoins = (coins: Coin[]): TrimmedCoins[] => coins.map((coin: Coin) => {
+  const trimmedCoin: Coin = {
+    id: coin.id,
+    rank: coin.rank,
+    name: coin.name,
+    symbol: coin.symbol,
+    marketCap: coin.marketCap,
+    price: coin.price,
+    change: coin.change,
+    uuid: coin.uuid,
+    slug: coin.slug,
+    iconUrl: coin.iconUrl,
+  };
+  return trimmedCoin;
+});
 
 async function request<T>(option?: string): Promise<HttpResponse<T>> {
   const response: HttpResponse<T> = await axios(
@@ -12,6 +30,7 @@ async function request<T>(option?: string): Promise<HttpResponse<T>> {
 const saveNewFile = async (newData: CoinRanking): Promise<void> => {
   const stringifiedData = JSON.stringify(newData);
   await setAsync('assets', stringifiedData);
+  console.log(`finished writing to file at: ${new Date().toLocaleString()}`);
 };
 
 export default async function fetchCoins(): Promise<void> {
@@ -48,6 +67,7 @@ export default async function fetchCoins(): Promise<void> {
       writing to file..
       started: ${new Date().toLocaleString()}
     `);
+    result.data.coins = trimCoins(result.data.coins);
     result.data.stats.updatedAt = now;
     saveNewFile(result);
   }

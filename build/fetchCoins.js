@@ -14,6 +14,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(require("axios"));
 const redis_1 = require("./redis");
+const trimCoins = (coins) => coins.map((coin) => {
+    const trimmedCoin = {
+        id: coin.id,
+        rank: coin.rank,
+        name: coin.name,
+        symbol: coin.symbol,
+        marketCap: coin.marketCap,
+        price: coin.price,
+        change: coin.change,
+        uuid: coin.uuid,
+        slug: coin.slug,
+        iconUrl: coin.iconUrl,
+    };
+    return trimmedCoin;
+});
 function request(option) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield axios_1.default(`https://api.coinranking.com/v1/public/coins?limit=100&timePeriod=24h&sort=coinranking&order=desc&base=USD${option || ''}`);
@@ -23,6 +38,7 @@ function request(option) {
 const saveNewFile = (newData) => __awaiter(void 0, void 0, void 0, function* () {
     const stringifiedData = JSON.stringify(newData);
     yield redis_1.setAsync('assets', stringifiedData);
+    console.log(`finished writing to file at: ${new Date().toLocaleString()}`);
 });
 function fetchCoins() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -53,6 +69,7 @@ function fetchCoins() {
       writing to file..
       started: ${new Date().toLocaleString()}
     `);
+            result.data.coins = trimCoins(result.data.coins);
             result.data.stats.updatedAt = now;
             saveNewFile(result);
         }

@@ -1,7 +1,19 @@
 import { AxiosResponse } from 'axios';
+export interface TrimmedCoins {
+    id: number;
+    rank?: number;
+    name?: string;
+    symbol?: string;
+    marketCap?: number;
+    price?: string;
+    change?: number;
+    uuid?: string;
+    slug?: string;
+    iconUr?: string;
+}
 export interface Coin {
     id: number;
-    uuid: string;
+    uuid?: string;
     slug?: string;
     symbol?: string;
     name?: string;
@@ -58,7 +70,7 @@ export interface CoinRanking {
             symbol: string;
             sign: string;
         };
-        coins: Coin[];
+        coins: TrimmedCoins[];
     };
 }
 export interface HttpResponse<T> extends AxiosResponse {
