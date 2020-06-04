@@ -12,38 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs_1 = require("fs");
-const zlib_1 = require("zlib");
 const axios_1 = __importDefault(require("axios"));
+const redis_1 = require("./redis");
 function request(option) {
     return __awaiter(this, void 0, void 0, function* () {
         const response = yield axios_1.default(`https://api.coinranking.com/v1/public/coins?limit=100&timePeriod=24h&sort=coinranking&order=desc&base=USD${option || ''}`);
         return response;
     });
 }
-const saveNewFile = (newData) => {
+const saveNewFile = (newData) => __awaiter(void 0, void 0, void 0, function* () {
     const stringifiedData = JSON.stringify(newData);
-    zlib_1.gzip(Buffer.from(stringifiedData, 'utf8'), (err, data) => {
-        if (err) {
-            console.log(`Error creating zip, time: ${new Date().toLocaleString()}`);
-        }
-        else {
-            fs_1.writeFile('./data.json.gz', data, (exception) => {
-                if (exception) {
-                    console.log('Error writing file to server');
-                }
-                else {
-                    console.log(`new data saved to file successfully, completed: ${new Date().toLocaleString()}`);
-                }
-            });
-        }
-    });
-};
+    yield redis_1.setAsync('assets', stringifiedData);
+});
 function fetchCoins() {
     return __awaiter(this, void 0, void 0, function* () {
-        let result = { data: { stats: { total: 0, updatedAt: '' }, coins: [] } };
+        let result = { data: { stats: { total: 0, updatedAt: 0 }, coins: [] } };
         const callAPI = yield request();
-        if (callAPI.statusText.toLocaleLowerCase() === 'ok') {
+        if ((/ok/i).test(callAPI.statusText)) {
             result = Object.assign({}, callAPI.data);
             console.log(`
       base case call made.
@@ -62,11 +47,11 @@ function fetchCoins() {
                 result = Object.assign(Object.assign({}, result), { data: Object.assign(Object.assign({}, result.data), { coins: [...result.data.coins, ...callAPIAgain.data.data.coins] }) });
                 offset += 100;
             }
-            const now = new Date().toLocaleString();
+            const now = Date.now();
             console.log(`
       Done querying resource ${result.data.stats.total} of ${result.data.coins.length}, 
       writing to file..
-      started: ${now}
+      started: ${new Date().toLocaleString()}
     `);
             result.data.stats.updatedAt = now;
             saveNewFile(result);
