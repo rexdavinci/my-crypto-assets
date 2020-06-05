@@ -23,8 +23,9 @@ exports.setAsync = exports.getAsync = void 0;
 /* eslint-disable @typescript-eslint/unbound-method */
 const redis = __importStar(require("redis"));
 const util_1 = require("util");
-const redisUri = process.env.REDISCLOUD_URL;
-const client = redis.createClient(redisUri, { no_ready_check: true });
+const { NODE_ENV, REDISCLOUD_URL } = process.env;
+// const redisUri = process.env.REDISCLOUD_URL as string;
+const client = (/development/i).test(NODE_ENV) ? redis.createClient() : redis.createClient(REDISCLOUD_URL, { no_ready_check: true });
 const getAsync = util_1.promisify(client.get).bind(client);
 exports.getAsync = getAsync;
 const setAsync = util_1.promisify(client.set).bind(client);

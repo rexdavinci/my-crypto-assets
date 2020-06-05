@@ -9,7 +9,7 @@ export interface TrimmedCoins {
     change?: number;
     uuid?: string;
     slug?: string;
-    iconUr?: string;
+    iconUrl?: string;
 }
 export interface Coin {
     id: number;
