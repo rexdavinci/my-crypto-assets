@@ -37,8 +37,15 @@ function request(option) {
 }
 const saveNewFile = (newData) => __awaiter(void 0, void 0, void 0, function* () {
     const stringifiedData = JSON.stringify(newData);
-    yield redis_1.setAsync('assets', stringifiedData);
-    console.log(`finished writing to file at: ${new Date().toLocaleString()}`);
+    const flushed = yield redis_1.flushAsync();
+    console.log('flushDB value is', flushed === 'OK');
+    if (flushed === 'OK') {
+        yield redis_1.setAsync('assets', stringifiedData);
+        console.log(`finished writing to file at: ${new Date().toLocaleString()}`);
+        return true;
+    }
+    console.log('Couldn\'t finish writing to the db at this time');
+    return false;
 });
 function fetchCoins() {
     return __awaiter(this, void 0, void 0, function* () {

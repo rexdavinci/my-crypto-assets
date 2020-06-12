@@ -2,7 +2,7 @@ import axios from 'axios';
 import {
   CoinRanking, HttpResponse, Coin, TrimmedCoins,
 } from './interfaces';
-import { setAsync } from './redis';
+import { setAsync, flushAsync } from './redis';
 
 const trimCoins = (coins: Coin[]): TrimmedCoins[] => coins.map((coin: Coin) => {
   const trimmedCoin: Coin = {
@@ -27,10 +27,17 @@ async function request<T>(option?: string): Promise<HttpResponse<T>> {
   return response;
 }
 
-const saveNewFile = async (newData: CoinRanking): Promise<void> => {
+const saveNewFile = async (newData: CoinRanking): Promise<boolean> => {
   const stringifiedData = JSON.stringify(newData);
-  await setAsync('assets', stringifiedData);
-  console.log(`finished writing to file at: ${new Date().toLocaleString()}`);
+  const flushed = await flushAsync();
+  console.log('flushDB value is', flushed === 'OK');
+  if (flushed === 'OK') {
+    await setAsync('assets', stringifiedData);
+    console.log(`finished writing to file at: ${new Date().toLocaleString()}`);
+    return true;
+  }
+  console.log('Couldn\'t finish writing to the db at this time');
+  return false;
 };
 
 export default async function fetchCoins(): Promise<void> {

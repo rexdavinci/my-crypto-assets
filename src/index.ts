@@ -12,7 +12,7 @@ app.use(compression());
 app.use(express.static('dist'));
 
 app.use('/api/data', async (_req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+  // res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
   const data = await getAsync('assets');
   return res.status(200).json({ assets: data });
 });
