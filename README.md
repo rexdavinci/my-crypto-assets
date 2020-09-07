@@ -1,2 +1,2 @@
-# my-crypto-asset
-A small cryptocurrency asset management portfolio
+# My Crypto Asset
+A cryptocurrency asset management portfolio
