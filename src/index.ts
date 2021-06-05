@@ -1,12 +1,12 @@
 /* eslint-disable no-new */
 // import dotenv from 'dotenv';
+import { config } from 'dotenv';
+config()
 import http from 'http';
 import express from 'express';
 import compression from 'compression';
 import cronjob from './cronJob';
 import { getAsync } from './redis';
-
-// dotenv.config();
 
 const isDevServer = process.env.NODE_ENV === 'development';
 cronjob.start();

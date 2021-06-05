@@ -45,14 +45,10 @@ export default async function fetchCoins(): Promise<void> {
   const callAPI: HttpResponse<CoinRanking> = await request();
   if ((/ok/i).test(callAPI.statusText)) {
     result = { ...callAPI.data };
-    console.log(`
-      base case call made.
-      ${Math.ceil(result.data.stats.total / 100)} more call to make to get ${result.data.stats.total} coin information, 
-      time: ${new Date().toLocaleString()}
-    `);
     let offset = 100;
+    let index = 1;
     while (result.data.coins.length < result.data.stats.total) {
-      console.log(`made a new call. ${new Date().toLocaleString()}`);
+      console.log(`${index}/${Math.ceil(result.data.stats.total / 100) - 1} calls. ${new Date().toLocaleString()}`);
       // eslint-disable-next-line no-await-in-loop
       const callAPIAgain: HttpResponse<CoinRanking> = await request(`&offset=${offset}`);
       // If there is an error with the query but some coins have been fetched
@@ -67,6 +63,7 @@ export default async function fetchCoins(): Promise<void> {
         },
       };
       offset += 100;
+      index += 1;
     }
     const now = Date.now();
     console.log(`

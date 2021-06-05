@@ -4,13 +4,15 @@
 	"description": "cryptocurrency portfolio",
 	"main": "index.js",
 	"homepage": "https://mycryptofolio.co",
-	"bugs": {"url": "https://github.com/rexdavinci/my-crypto-assets/issues"},
+	"bugs": {
+		"url": "https://github.com/rexdavinci/my-crypto-assets/issues"
+	},
 	"repository": {
-		"type" : "git",
-		"url" : "https://github.com/rexdavinci/my-crypto-assets.git"
+		"type": "git",
+		"url": "https://github.com/rexdavinci/my-crypto-assets.git"
 	},
 	"scripts": {
-		"tsc": "rm -r build && tsc",
+		"tsc": "tsc",
 		"build:app": "cd client && npm run build && cp -r dist ../ && cd ../ && npm run tsc",
 		"dev": "ts-node-dev src/index.ts",
 		"start": "node build/index.js",
