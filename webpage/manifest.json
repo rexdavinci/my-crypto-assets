@@ -1,0 +1,9 @@
+{
+  "short_name": "MyCryptoAssets",
+  "name": "My Crypto Assets Portfolio",
+  "start_url": "",
+  "background_color": "#FFF",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#EEE"
+}

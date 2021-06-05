@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"tsc": "tsc",
-		"build:app": "cd client && npm run build && cp -r dist ../ && cd ../ && npm run tsc",
+		"build:app": "cd webpage && npm run build && cp -r dist ../ && cd ../ && npm run tsc",
 		"dev": "ts-node-dev src/index.ts",
 		"start": "node build/index.js",
 		"lint": "eslint --ext src/*.ts"
