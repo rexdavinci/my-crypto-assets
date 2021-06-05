@@ -32,7 +32,6 @@ $breakpoint-phone: 640px;
 $breakpoint-tablet: 768px;
 $breakpoint-desktop: 1024px;
 
-
   a {
     font-weight: bold;
     color: whitesmoke;

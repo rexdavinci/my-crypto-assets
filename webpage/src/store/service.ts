@@ -17,5 +17,4 @@ async function requestDataFromAPI<T>(): Promise<APIResponse<T>> {
   return response;
 }
 
-
 export default requestDataFromAPI;

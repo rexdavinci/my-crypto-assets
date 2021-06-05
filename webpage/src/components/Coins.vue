@@ -43,7 +43,6 @@
       </div>
     </template>
 
-
     <template v-slot:item.change="{ item }">
       <v-chip :color="getColor(item.change)" dark>{{ item.change }}</v-chip>
     </template>
