@@ -13,7 +13,7 @@
 	},
 	"scripts": {
 		"tsc": "tsc",
-		"build": "cd webpage && npm install && npm run build && cp -r dist ../ && rm -rf dist && cd ../ && npm run tsc",
+		"build": "npm run tsc",
 		"dev": "ts-node-dev src/index.ts",
 		"start": "NODE_ENV=production node build/index.js",
 		"lint": "eslint --ext src/*.ts"
