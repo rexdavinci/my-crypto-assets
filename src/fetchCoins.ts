@@ -22,7 +22,11 @@ const trimCoins = (coins: Coin[]): TrimmedCoins[] => coins.map((coin: Coin) => {
 
 async function request<T>(option?: string): Promise<HttpResponse<T>> {
   const response: HttpResponse<T> = await axios(
-    `https://api.coinranking.com/v1/public/coins?limit=100&timePeriod=24h&sort=coinranking&order=desc&base=USD${option || ''}`,
+    `https://api.coinranking.com/v2/coins?limit=100&timePeriod=24h&base=USD${option || ''}`, {
+      headers: {
+        'x-access-token': process.env.API_KEY,
+      },
+    },
   );
   return response;
 }
